@@ -1,6 +1,3 @@
-# noqa: F403, F401
-
-
 """
 Django settings for core project.
 
