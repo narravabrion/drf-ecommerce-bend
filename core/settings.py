@@ -14,6 +14,9 @@ import os
 from pathlib import Path
 from typing import List
 
+import cloudinary
+import cloudinary.api
+import cloudinary.uploader
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -46,7 +49,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # third party apps
     "rest_framework",
+    "cloudinary",
+    # apps
     "users",
+    "inventory",
 ]
 
 MIDDLEWARE = [
@@ -131,3 +137,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # custom user
 AUTH_USER_MODEL = "users.User"
+
+# cloudinary config
+
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    secure=True,
+)
