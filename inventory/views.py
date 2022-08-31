@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from inventory.models import (
     Category,
@@ -8,6 +9,7 @@ from inventory.models import (
     ProductType,
     Stock,
 )
+from inventory.permissions import IsOwnerOrReadOnly
 from inventory.serializers import (
     CategorySerializer,
     MediaSerializer,
@@ -19,22 +21,26 @@ from inventory.serializers import (
 
 
 class CategoryListApiView(generics.ListAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
 
 
 class ProductTypeListApiView(generics.ListAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ProductTypeSerializer
     queryset = ProductType.objects.all()
 
 
 class ProductListApiView(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     lookup_field = "slug"
 
 
 class ProductDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     lookup_field = "slug"

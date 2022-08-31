@@ -26,7 +26,6 @@ class Order(TimeStampedModel):
         default=uuid4,
     )
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    # product_inventory = models.ForeignKey(ProductInventory, null=True, on_delete=models.SET_NULL)
     status = models.CharField(
         max_length=20, choices=ORDER_STATUS_CHOICES, default="created"
     )

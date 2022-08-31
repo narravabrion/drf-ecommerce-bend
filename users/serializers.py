@@ -1,6 +1,9 @@
+from typing import Any
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from users.validators import (
     validate_password_digit,
@@ -10,6 +13,14 @@ from users.validators import (
 )
 
 User = get_user_model()
+
+
+class UserTokenObtainPairSerializer(TokenObtainPairSerializer):  # type: ignore[no-any-unimported]
+    @classmethod
+    def get_token(cls, user: Any) -> Any:
+        token = super().get_token(user)
+        token["name"] = user.name
+        return token
 
 
 class UserSerializer(serializers.ModelSerializer):
