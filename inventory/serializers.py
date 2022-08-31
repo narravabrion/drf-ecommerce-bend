@@ -27,35 +27,34 @@ class ProductTypeSerializer(serializers.ModelSerializer):
         fields = ("name",)
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    id = serializers.CharField(read_only=True)
-    product_inventory = serializers.StringRelatedField(many=True)  # type: ignore
-    category = CategorySerializer(read_only=True)
-    owner = UserSerializer(read_only=True)
+class MediaSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True, required=False)
 
     class Meta:
-        model = Product
+        model = Media
         fields = (
-            "id",
-            "slug",
-            "name",
-            "description",
-            "is_active",
-            "category",
-            "product_inventory",
-            "owner",
+            "image",
+            "alt_text",
+        )
+
+
+class StockSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stock
+        fields = (
+            "last_checked",
+            "units",
+            "units_sold",
         )
 
 
 class ProductInventorySerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
+    product = serializers.HyperlinkedRelatedField(  # type: ignore[var-annotated]
+        read_only=True, view_name="product-detail", lookup_field="slug"
+    )
     product_type = ProductTypeSerializer(read_only=True)
-    media = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Media.objects.all()
-    )
-    product_inventory_stock = serializers.PrimaryKeyRelatedField(  # type: ignore
-        read_only=True
-    )
+    media = MediaSerializer(many=True)
+    product_inventory_stock = StockSerializer()
 
     class Meta:
         model = ProductInventory
@@ -75,22 +74,27 @@ class ProductInventorySerializer(serializers.ModelSerializer):
         )
 
 
-class MediaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Media
-        fields = (
-            "product_inventory",
-            "image",
-            "alt_text",
-        )
+class ProductSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(read_only=True)
+    product_inventory = serializers.HyperlinkedRelatedField(  # type: ignore[var-annotated]
+        read_only=True,
+        many=True,
+        view_name="product-inventory-detail",
+        lookup_field="sku",
+    )
+    # product_inventory = serializers.StringRelatedField(many=True)  # type: ignore
+    category = CategorySerializer(read_only=True)
+    owner = UserSerializer(read_only=True)
 
-
-class StockSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Stock
+        model = Product
         fields = (
+            "id",
+            "slug",
+            "name",
+            "description",
+            "is_active",
+            "category",
             "product_inventory",
-            "last_checked",
-            "units",
-            "units_sold",
+            "owner",
         )
