@@ -10,9 +10,11 @@ class OrderListView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filterset_fields = ("status",)
 
 
 class OrderDetailView(generics.ListCreateAPIView):
     permission_classes = (IsOwnerOrReadOnly,)
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filterset_fields = ("status",)

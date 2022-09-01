@@ -37,6 +37,10 @@ class ProductListApiView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     lookup_field = "slug"
+    filterset_fields = ("category__name", "is_active", "owner__username")
+    search_fields = ("name", "description")
+    ordering_fields = ("name", "created_at")
+    ordering = ("created_at",)
 
 
 class ProductDetailApiView(generics.RetrieveUpdateDestroyAPIView):
@@ -44,17 +48,51 @@ class ProductDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     lookup_field = "slug"
+    filterset_fields = ("category__name", "is_active", "owner__username")
+    search_fields = ("name", "description")
+    ordering_fields = ("name", "created_at")
+    ordering = ("created_at",)
 
 
 class ProductInventoryListApiView(generics.ListCreateAPIView):
     serializer_class = ProductInventorySerializer
     queryset = ProductInventory.objects.all()
+    filterset_fields = (
+        "product_type__name",
+        "is_active",
+        "is_on_sale",
+        "weight",
+    )
+    search_fields = ("sku",)
+    ordering_fields = (
+        "retail_price",
+        "weight",
+        "store_price",
+        "sale",
+        "created_at",
+    )
+    ordering = ("created_at",)
 
 
 class ProductInventoryDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProductInventorySerializer
     queryset = ProductInventory.objects.all()
     lookup_field = "sku"
+    filterset_fields = (
+        "product_type__name",
+        "is_active",
+        "is_on_sale",
+        "weight",
+    )
+    search_fields = ("sku",)
+    ordering_fields = (
+        "retail_price",
+        "weight",
+        "store_price",
+        "sale",
+        "created_at",
+    )
+    ordering = ("created_at",)
 
 
 class StockListApiView(generics.ListAPIView):

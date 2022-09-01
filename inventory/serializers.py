@@ -83,7 +83,8 @@ class ProductSerializer(serializers.ModelSerializer):
         lookup_field="sku",
     )
     # product_inventory = serializers.StringRelatedField(many=True)  # type: ignore
-    category = CategorySerializer(read_only=True)
+    category = serializers.CharField(read_only=True, source="category.name")
+    # category = CategorySerializer(read_only=True)
     owner = UserSerializer(read_only=True)
 
     class Meta:

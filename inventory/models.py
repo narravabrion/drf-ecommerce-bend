@@ -17,9 +17,9 @@ User = get_user_model()
 class Category(models.Model):
 
     CATEGORIES = (
-        ("DECORATIVE", "decorative"),
-        ("COMMERCIAL", "commercial"),
-        ("FINE_ART", "fine art"),
+        ("decorative", "decorative"),
+        ("commercial", "commercial"),
+        ("fine_art", "fine art"),
     )
 
     name = models.CharField(max_length=100, choices=CATEGORIES)
@@ -43,13 +43,13 @@ def slug_pre_save_category(sender: Any, instance: Any, **kwargs: Any) -> None:
 
 class ProductType(models.Model):
     TYPES = (
-        ("PAINTING", "painting"),
-        ("SCULPTURE", "sculpture"),
+        ("painting", "painting"),
+        ("sculpture", "sculpture"),
         ("DIY", "DIY"),
-        ("BEADROCK", "beadwork"),
-        ("PHOTOGRAPHY", "photography"),
-        ("DRAWING", "drawing"),
-        ("CLAYWORK", "claywork"),
+        ("beadwork", "beadwork"),
+        ("photography", "photography"),
+        ("drawing", "drawing"),
+        ("claywork", "claywork"),
     )
     name = models.CharField(max_length=255, unique=True, choices=TYPES)
     slug = models.SlugField(max_length=150, unique=True, blank=True)
