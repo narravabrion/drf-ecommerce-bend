@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from users.permissions import IsOwnerOrReadOnly
 from users.serializers import UserSerializer, UserTokenObtainPairSerializer
 
 User = get_user_model()
@@ -20,9 +21,10 @@ class UserCreateApiView(generics.CreateAPIView):
 
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
-
+    permission_classes = (IsOwnerOrReadOnly,)
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    lookup_field = "id"
 
 
 class UserTokenObtainPairView(TokenObtainPairView):  # type: ignore[no-any-unimported]

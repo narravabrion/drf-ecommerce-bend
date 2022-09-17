@@ -1,3 +1,5 @@
+from typing import Any
+
 from rest_framework import serializers
 
 from inventory.models import (
@@ -8,7 +10,6 @@ from inventory.models import (
     ProductType,
     Stock,
 )
-from users.serializers import UserSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -50,9 +51,13 @@ class StockSerializer(serializers.ModelSerializer):
 
 class ProductInventorySerializer(serializers.ModelSerializer):
     product = serializers.HyperlinkedRelatedField(  # type: ignore[var-annotated]
-        read_only=True, view_name="product-detail", lookup_field="slug"
+        queryset=Product.objects.all(),
+        view_name="product-detail",
+        lookup_field="slug",
     )
-    product_type = ProductTypeSerializer(read_only=True)
+    product_type = serializers.SlugRelatedField(
+        queryset=ProductType.objects.all(), slug_field="name"
+    )
     media = MediaSerializer(many=True)
     product_inventory_stock = StockSerializer()
 
@@ -73,6 +78,38 @@ class ProductInventorySerializer(serializers.ModelSerializer):
             "product_inventory_stock",
         )
 
+    # enable saving of nested fields in a single save
+    def create(self, validated_data: dict) -> ProductInventory:
+        media_data = validated_data.pop("media")
+        stock_data = validated_data.pop("product_inventory_stock")
+        product_inventory = ProductInventory.objects.create(**validated_data)
+        for media in media_data:
+            Media.objects.create(product_inventory=product_inventory, **media)
+        Stock.objects.create(product_inventory=product_inventory, **stock_data)
+        return product_inventory
+
+    def update(
+        self, instance: ProductInventory, validated_data: dict
+    ) -> ProductInventory:
+        media_data = validated_data.pop("media")
+        stock_data = validated_data.pop("product_inventory_stock")
+        instance.__dict__.update(**validated_data)
+        instance.save()
+        for media in media_data:
+            media_instance, created = Media.objects.get_or_create(
+                **media, product_inventory=instance
+            )
+            if not created:
+                media_instance.__dict__.update(**media)
+                media_instance.save()
+        stock_instance, created = Stock.objects.get_or_create(
+            defaults=stock_data, product_inventory=instance
+        )
+        if not created:
+            stock_instance.__dict__.update(**stock_data)
+            stock_instance.save()
+        return instance
+
 
 class ProductSerializer(serializers.ModelSerializer):
     id = serializers.CharField(read_only=True)
@@ -82,10 +119,10 @@ class ProductSerializer(serializers.ModelSerializer):
         view_name="product-inventory-detail",
         lookup_field="sku",
     )
-    # product_inventory = serializers.StringRelatedField(many=True)  # type: ignore
-    category = serializers.CharField(read_only=True, source="category.name")
-    # category = CategorySerializer(read_only=True)
-    owner = UserSerializer(read_only=True)
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(), slug_field="name"
+    )
+    owner = serializers.SlugRelatedField(slug_field="username", read_only=True)  # type: ignore[var-annotated]
 
     class Meta:
         model = Product
@@ -99,3 +136,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "product_inventory",
             "owner",
         )
+
+    def create(self, validated_data: Any) -> Any:
+        product = Product.objects.create(
+            **validated_data, owner=self.context.get("request").user  # type: ignore[union-attr]
+        )
+        return product

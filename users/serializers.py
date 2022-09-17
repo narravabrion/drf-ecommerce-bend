@@ -57,3 +57,9 @@ class UserSerializer(serializers.ModelSerializer):
             "is_staff",
             "is_superuser",
         )
+
+    def create(self, validated_data: Any) -> Any:
+        user = User.objects.create_user(**validated_data)
+
+        user.save()
+        return user

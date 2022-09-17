@@ -20,4 +20,4 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         """can only edit and delete own article"""
         if request.method in permissions.SAFE_METHODS:
             return True
-        return obj.user == request.user or request.user.is_superuser
+        return obj.id == request.user.id or request.user.is_superuser

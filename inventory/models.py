@@ -173,7 +173,7 @@ class ProductInventory(TimeStampedModel):
 class Media(TimeStampedModel):
     product_inventory = models.ForeignKey(
         ProductInventory,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="media",
     )
     image = CloudinaryField("image")
@@ -192,7 +192,7 @@ class Stock(models.Model):
     product_inventory = models.OneToOneField(
         ProductInventory,
         related_name="product_inventory_stock",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
     )
     last_checked = models.DateTimeField(
         null=True,

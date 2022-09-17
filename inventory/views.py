@@ -1,22 +1,20 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from inventory.models import (
+from inventory.models import (  # Stock,
     Category,
     Media,
     Product,
     ProductInventory,
     ProductType,
-    Stock,
 )
-from inventory.permissions import IsOwnerOrReadOnly
-from inventory.serializers import (
+from inventory.permissions import IsInventoryOwnerOrReadOnly, IsOwnerOrReadOnly
+from inventory.serializers import (  # StockSerializer,
     CategorySerializer,
     MediaSerializer,
     ProductInventorySerializer,
     ProductSerializer,
     ProductTypeSerializer,
-    StockSerializer,
 )
 
 
@@ -57,6 +55,7 @@ class ProductDetailApiView(generics.RetrieveUpdateDestroyAPIView):
 class ProductInventoryListApiView(generics.ListCreateAPIView):
     serializer_class = ProductInventorySerializer
     queryset = ProductInventory.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     filterset_fields = (
         "product_type__name",
         "is_active",
@@ -75,6 +74,7 @@ class ProductInventoryListApiView(generics.ListCreateAPIView):
 
 
 class ProductInventoryDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsInventoryOwnerOrReadOnly,)
     serializer_class = ProductInventorySerializer
     queryset = ProductInventory.objects.all()
     lookup_field = "sku"
@@ -95,19 +95,19 @@ class ProductInventoryDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     ordering = ("created_at",)
 
 
-class StockListApiView(generics.ListAPIView):
-    serializer_class = StockSerializer
-    queryset = Stock.objects.all()
+# class StockListApiView(generics.ListAPIView):
+#     serializer_class = StockSerializer
+#     queryset = Stock.objects.all()
 
 
-class StockDetailApiView(generics.RetrieveUpdateAPIView):
-    serializer_class = StockSerializer
-    queryset = Stock.objects.all()
+# class StockDetailApiView(generics.RetrieveUpdateAPIView):
+#     serializer_class = StockSerializer
+#     queryset = Stock.objects.all()
 
 
-class MediaListApiView(generics.ListCreateAPIView):
-    serializer_class = MediaSerializer
-    queryset = Media.objects.all()
+# class MediaListApiView(generics.ListCreateAPIView):
+#     serializer_class = MediaSerializer
+#     queryset = Media.objects.all()
 
 
 class MediaDetailAPiView(generics.RetrieveUpdateDestroyAPIView):
