@@ -1,16 +1,12 @@
 from django.urls import path
 
-from inventory.views import (
+from inventory.views import (  # MediaDetailAPiView,; MediaListApiView,; StockDetailApiView,; StockListApiView,
     CategoryListApiView,
-    MediaDetailAPiView,
-    MediaListApiView,
     ProductDetailApiView,
     ProductInventoryDetailApiView,
     ProductInventoryListApiView,
     ProductListApiView,
     ProductTypeListApiView,
-    StockDetailApiView,
-    StockListApiView,
 )
 
 urlpatterns = [
@@ -38,16 +34,16 @@ urlpatterns = [
         ProductInventoryDetailApiView.as_view(),
         name="product-inventory-detail",
     ),
-    path("inventory/stock/", StockListApiView.as_view(), name="stock"),
-    path(
-        "inventory/stock/<str:pk>/detail/",
-        StockDetailApiView.as_view(),
-        name="stock",
-    ),
-    path("media/images/", MediaListApiView.as_view(), name="stock"),
-    path(
-        "media/images/<str:pk>/detail/",
-        MediaDetailAPiView.as_view(),
-        name="stock",
-    ),
+    # path("inventory/stock/", StockListApiView.as_view(), name="stock"),
+    # path(
+    #     "inventory/stock/<str:pk>/detail/",
+    #     StockDetailApiView.as_view(),
+    #     name="stock",
+    # ),
+    # path("media/images/", MediaListApiView.as_view(), name="stock"),
+    # path(
+    #     "media/images/<str:pk>/detail/",
+    #     MediaDetailAPiView.as_view(),
+    #     name="stock",
+    # ),
 ]
