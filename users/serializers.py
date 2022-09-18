@@ -19,7 +19,7 @@ class UserTokenObtainPairSerializer(TokenObtainPairSerializer):  # type: ignore[
     @classmethod
     def get_token(cls, user: Any) -> Any:
         token = super().get_token(user)
-        token["name"] = user.name
+        token["username"] = user.username
         return token
 
 
